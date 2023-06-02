@@ -4,8 +4,8 @@ import itertools
 
 class DataReader():
     def __init__(self, train_path, test_path, maxstep, numofques):
-        self.train_path = 'train-data.csv'
-        self.test_path = 'test-data.csv'
+        self.train_path = 'Raw/train-data.csv'
+        self.test_path = 'Raw/test-data.csv'
         self.maxstep = maxstep
         self.numofques = numofques
 

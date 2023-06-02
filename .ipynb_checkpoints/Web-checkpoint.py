@@ -33,7 +33,7 @@ def main():
     """)
 
     # Parameters
-    input_dim = 300
+    input_dim = 150
     hidden_dim = 50
     layer_dim = 4
     output_dim = 150
