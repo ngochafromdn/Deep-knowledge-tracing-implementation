@@ -1,13 +1,11 @@
-
-
 import numpy as np
 import itertools
 
 
 class DataReader():
     def __init__(self, train_path, test_path, maxstep, numofques):
-        self.train_path = train_path
-        self.test_path = test_path
+        self.train_path = 'train-data.csv'
+        self.test_path = 'test-data.csv'
         self.maxstep = maxstep
         self.numofques = numofques
 
