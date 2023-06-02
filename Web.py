@@ -68,12 +68,9 @@ def main():
         for epoch in range(num_epochs):
             # Perform training
             model, optimizer = eval.train_epoch(model, train_loader, optimizer, loss_func, device)
-            # Evaluate the model on the test data
-            auc, f1, recall, precision = eval.evaluate_model(model, test_loader, device)
 
             # Display epoch information on Streamlit
             st.write(f"Epoch {epoch+1} completed")
-            st.write(f"AUC: {auc:.4f}  F1: {f1:.4f}  Recall: {recall:.4f}  Precision: {precision:.4f}")
 
             # Perform prediction on the test data and display the results after each epoch
             prediction = eval.test_epoch(model, test_loader, eval.lossFunc(output_dim, hidden_dim, device), device)
