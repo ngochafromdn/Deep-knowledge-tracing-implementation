@@ -4,8 +4,8 @@ from Data.readdata import DataReader
 
 
 def getDataLoader(batch_size, num_of_questions, max_step):
-    handle = DataReader('train-data.csv',
-                        'test-data.csv', max_step,
+    handle = DataReader('Raw/data.csv',
+                        'Raw/test-data.csv', max_step,
                         num_of_questions)
     dtrain = torch.tensor(handle.getTrainData().astype(float).tolist(),
                           dtype=torch.float32)
