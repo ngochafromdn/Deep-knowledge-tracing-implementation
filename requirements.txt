@@ -7,3 +7,4 @@ tqdm==4.65.0
 scikit-learn
 pip==23.1.2
 ast
+click==7.1.2
