@@ -1,4 +1,3 @@
-
 import streamlit as st
 import torch
 from model.DKT.RNNModel import RNNModel
@@ -45,7 +44,7 @@ def main():
 
         if question_index:
             with st.spinner("Loading data..."):
-                _, test_loader = getDataLoader(1, output_dim, hidden_dim)  # Set batch size to 1 for single question probability
+                test_loader = getDataLoader(1, output_dim, hidden_dim)  # Set batch size to 1 for single question probability
                 probability = calculate_probability(model, question_index, test_loader)
             st.write(f"Probability of correctness for question {question_index}: {probability}")
 
@@ -60,12 +59,12 @@ def calculate_probability(model, question_index, test_loader):
 
     # Get the previous response for the specified question index from the test dataset
     for data in test_loader:
-        questions = data['question']
-        responses = data['response']
+        questions = data[:, :, :output_dim]
+        responses = data[:, :, output_dim:]
         break
 
     # Find the response for the specified question index
-    prev_response = responses[question_index - 1]
+    prev_response = responses[:, question_index - 1]
 
     # Convert previous response to a numeric value
     response_value = int(prev_response)
@@ -84,3 +83,4 @@ def calculate_probability(model, question_index, test_loader):
 
 if __name__ == '__main__':
     main()
+
