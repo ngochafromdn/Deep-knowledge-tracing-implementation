@@ -1,10 +1,8 @@
+
 import streamlit as st
 import torch
-from torch.optim import Adam
 from model.DKT.RNNModel import RNNModel
 from Data.dataloader import getDataLoader
-import ast
-from Evaluation import eval
 
 def main():
     st.title('Knowledge Tracing Model')
@@ -15,17 +13,9 @@ def main():
 
         This web application allows you to estimate the probability of correctness for a single question using a pre-trained Knowledge Tracing Model.
 
-        ### Model Parameters
-
-        Use the sidebar to customize the model's architecture and hyperparameters.
-
-        ### Load Data
-
-        Click the 'Load Data' button to load the test data. The data will be used for estimating the probability of correctness.
-
         ### Probability of correctness
 
-        After loading the data, you can estimate the probability of correctness for a single question.
+        Click the 'Probability of correctness' button to estimate the probability of correctness for a single question. Please wait for the data loader to load the necessary data.
 
         ### Trained Model Information
 
@@ -43,31 +33,24 @@ def main():
     # Load the trained model
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = RNNModel(input_dim, hidden_dim, layer_dim, output_dim, device)
-    model.load_state_dict(torch.load('Result/model.pth'))
+    model_state_dict = torch.load('Result/model.pth')
+    model.load_state_dict(model_state_dict)
     model.to(device)
 
-    # Load the data
-    test_loader = None
-    data_loaded = False
-
-    if st.sidebar.button('Load Data'):
-        with st.spinner("Loading data..."):
-            _, test_loader = getDataLoader(1, output_dim, hidden_dim)  # Set batch size to 1 for single question probability
-            data_loaded = True
-        st.success("Data loaded successfully!")
-
     # Estimate the probability of correctness for a single question
-    if st.sidebar.button('Probability of correctness') and data_loaded:
+    if st.button('Probability of correctness'):
         st.subheader("Estimate Probability of Correctness")
 
         question_index = st.number_input("Enter the question index (from 1 to 100):", min_value=1, max_value=100, step=1)
 
         if question_index:
-            probability = calculate_probability(model, question_index, test_loader)
+            with st.spinner("Loading data..."):
+                _, test_loader = getDataLoader(1, output_dim, hidden_dim)  # Set batch size to 1 for single question probability
+                probability = calculate_probability(model, question_index, test_loader)
             st.write(f"Probability of correctness for question {question_index}: {probability}")
 
     # Trained Model Visualization
-    if st.sidebar.button('Model Information'):
+    if st.button('Model Information'):
         st.subheader("Trained Model Information")
         st.text("Model Architecture:")
         st.code(model)
