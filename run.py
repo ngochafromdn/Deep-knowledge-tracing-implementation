@@ -4,15 +4,15 @@ Usage:
     run.py rnn --hidden=<h> [options]
 
 Options:
-    --length=<int>                      max length of question sequence [default: 50]
-    --questions=<int>                   num of question [default: 150]
+    --length=<int>                      max length of attemps [default: 100]
+    --questions=<int>                   num of question [default: 101]
     --lr=<float>                        learning rate [default: 0.001]
     --bs=<int>                          batch size [default: 64]
-    --seed=<int>                        random seed [default: 13]
-    --epochs=<int>                      number of epochs [default: 2]
+    --seed=<int>                        random seed [default: 42]
+    --epochs=<int>                      number of epochs [default: 10]
     --cuda=<int>                        use GPU id [default: 0]
-    --hidden=<int>                      dimension of hidden state [default: 50]
-    --layers=<int>                      layers of rnn [default: 4]
+    --hidden=<int>                      dimension of hidden state [default: 128]
+    --layers=<int>                      layers of rnn [default: 2]
     --dropout=<float>                   dropout rate [default: 0.1]
 """
 
@@ -57,7 +57,6 @@ def main():
 
     logger = logging.getLogger('main')
     logger.setLevel(level=logging.DEBUG)
-    date = datetime.now()
     setup_seed(seed)
 
     if torch.cuda.is_available():
@@ -82,13 +81,14 @@ def main():
         model, optimizer = eval.train_epoch(model, trainLoader, optimizer,
                                           loss_func, device)
         logger.info(f'epoch {epoch}')
+        eval.test_epoch(model, testLoader, loss_func, device)
 
     # Save the model
     model_dir = 'Result'  
     os.makedirs(model_dir, exist_ok=True)
     model_path = os.path.join(model_dir, 'model.pth')
     torch.save(model.state_dict(), model_path)
-    return predicted_values
+    
 
 
 
