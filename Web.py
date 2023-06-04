@@ -1,3 +1,4 @@
+
 import streamlit as st
 import torch
 from torch.optim import Adam
@@ -5,7 +6,6 @@ from model.DKT.RNNModel import RNNModel
 from Data.dataloader import getDataLoader
 import ast
 from Evaluation import eval
-import matplotlib.pyplot as plt
 
 def main():
     st.title('Knowledge Tracing Model')
@@ -20,12 +20,11 @@ def main():
 
         Use the sidebar to customize the model's architecture and hyperparameters.
 
-        - **Batch Size:** Configure the batch size for training and prediction.
-        - **Number of Epochs:** Set the number of training epochs.
+        - **Batch Size:** Configure the batch size for prediction.
 
         ### Load Data
 
-        Click the 'Load Data' button to load the training and test data. The data will be loaded using the specified batch size.
+        Click the 'Load Data' button to load the test data. The data will be loaded using the specified batch size.
 
         ### Run Model
 
@@ -33,7 +32,11 @@ def main():
 
         ### Probability of correctness
 
-        After training the model, you can estimate the probability of correctness for a single question.
+        After loading the data, you can estimate the probability of correctness for a single question.
+
+        ### Trained Model Visualization
+
+        To visualize the trained model, click the 'Visualize Model' button. It will display the architecture and summary of the model.
 
         ---
     """)
@@ -44,7 +47,6 @@ def main():
     layer_dim = 2
     output_dim = 101
     batch_size = st.sidebar.number_input('Batch Size', min_value=1, step=1, value=64)
-    num_epochs = st.sidebar.number_input('Number of Epochs', min_value=1, step=1, value=10)
 
     # Load the trained model
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -53,19 +55,22 @@ def main():
     model.to(device)
 
     # Load the data
-    train_loader, test_loader = None, None
+    test_loader = None
+    data_loaded = False
 
     if st.sidebar.button('Load Data'):
         with st.spinner("Loading data..."):
-            train_loader, test_loader = getDataLoader(batch_size, output_dim, hidden_dim)
+            _, test_loader = getDataLoader(batch_size, output_dim, hidden_dim)
+            data_loaded = True
         st.success("Data loaded successfully!")
 
     # Perform prediction on the test data and display the results
-    if st.sidebar.button('Run Model') and train_loader is not None and test_loader is not None:
-        st.subheader("Prediction")
-        prediction = eval.test_epoch(model, test_loader, eval.lossFunc(output_dim, hidden_dim, device), device)
-        st.markdown(f"<p style='font-size: 18px;'>{prediction}</p>", unsafe_allow_html=True)
-    
+    if st.sidebar.button('Run Model') and data_loaded:
+        with st.spinner("Running model..."):
+            st.subheader("Prediction")
+            prediction = eval.test_epoch(model, test_loader, eval.lossFunc(output_dim, hidden_dim, device), device)
+            st.markdown(f"<p style='font-size: 18px;'>{prediction}</p>", unsafe_allow_html=True)
+
     def calculate_probability(model, question_index, test_loader):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -94,67 +99,20 @@ def main():
         return question_probability
 
     # Estimate the probability of correctness for a single question
-    if st.sidebar.button('Probability of correctness'):
+    if st.sidebar.button('Probability of correctness') and data_loaded:
         st.subheader("Estimate Probability of Correctness")
 
         question_index = st.number_input("Enter the question index (from 1 to 100):", min_value=1, max_value=100, step=1)
 
-        if question_index and test_loader is not None:
+        if question_index:
             probability = calculate_probability(model, question_index, test_loader)
             st.write(f"Probability of correctness for question {question_index}: {probability}")
 
-    # Training loop
-    if st.sidebar.button('Start Training') and train_loader is not None:
-        st.subheader("Training Progress")
-        optimizer = Adam(model.parameters())
-        loss_func = eval.lossFunc(output_dim, hidden_dim, device)
-
-        training_loss = []
-        evaluation_auc = []
-        evaluation_f1 = []
-        evaluation_recall = []
-        evaluation_precision = []
-
-        st.write("Training progress:")
-        for epoch in range(num_epochs):
-            # Perform training
-            model, optimizer, epoch_loss = eval.train_epoch(model, train_loader, optimizer, loss_func, device)
-            training_loss.append(epoch_loss)
-
-            # Perform evaluation
-            auc, f1, recall, precision = eval.evaluate_model(model, test_loader, loss_func, device)
-            evaluation_auc.append(auc)
-            evaluation_f1.append(f1)
-            evaluation_recall.append(recall)
-            evaluation_precision.append(precision)
-
-            # Display epoch information on Streamlit
-            st.write(f"Epoch {epoch+1} completed")
-            st.write(f"AUC: {auc:.4f} | F1: {f1:.4f} | Recall: {recall:.4f} | Precision: {precision:.4f}")
-
-        # Visualize training loss and evaluation metrics
-        fig, axes = plt.subplots(2, 2, figsize=(12, 8))
-        axes[0, 0].plot(training_loss)
-        axes[0, 0].set_title("Training Loss")
-        axes[0, 0].set_xlabel("Epoch")
-        axes[0, 0].set_ylabel("Loss")
-        axes[0, 1].plot(evaluation_auc)
-        axes[0, 1].set_title("Evaluation AUC")
-        axes[0, 1].set_xlabel("Epoch")
-        axes[0, 1].set_ylabel("AUC")
-        axes[1, 0].plot(evaluation_f1)
-        axes[1, 0].set_title("Evaluation F1 Score")
-        axes[1, 0].set_xlabel("Epoch")
-        axes[1, 0].set_ylabel("F1 Score")
-        axes[1, 1].plot(evaluation_recall, label="Recall")
-        axes[1, 1].plot(evaluation_precision, label="Precision")
-        axes[1, 1].set_title("Evaluation Recall and Precision")
-        axes[1, 1].set_xlabel("Epoch")
-        axes[1, 1].set_ylabel("Score")
-        axes[1, 1].legend()
-
-        st.subheader("Training Loss and Evaluation Metrics")
-        st.pyplot(fig)
+    # Trained Model Visualization
+    if st.sidebar.button('Model Information'):
+        st.subheader("Trained Model Information")
+        st.text("Model Architecture:")
+        st.code(model)
 
 if __name__ == '__main__':
     main()
