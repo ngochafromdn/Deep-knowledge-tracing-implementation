@@ -22,7 +22,7 @@ def main(prediction):
         """
         <style>
         .main {
-            background-color: pink;
+            background-color: #FDF3F4;
             margin: 0px 50px;
             padding: 20px;
             border-radius: 10px;
