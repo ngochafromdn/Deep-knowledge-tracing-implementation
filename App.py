@@ -17,6 +17,19 @@ predictions = json.loads(predict_data_json)
 predictions = predictions['prediction'][batch] 
 def main(prediction):
     st.set_page_config(page_title="Question Accuracy Probability", page_icon="📚")
+    
+    st.markdown(
+        """
+        <style>
+        .main {
+            background-color: pink;
+            margin: 0px 50px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
     st.title("Question Accuracy Probability based on Deep Knowledge Tracing model")
     
     st.markdown(
