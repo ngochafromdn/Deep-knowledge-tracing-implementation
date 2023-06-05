@@ -67,11 +67,11 @@ def main(prediction):
                 if accuracy_index == 1:
                     accuracy_prob_this = max(prediction[step])
                 else:
-                    accuracy_prob_this = min(predictions[step])
+                    accuracy_prob_this = 1 - max(prediction[step])
                 
                 accuracy_prob *= accuracy_prob_this
             
-            accuracy_prob = predictions[list_previous_question[question_index]-1][int(next_question)]/( predictions[list_previous_question[question_index]-1][int(next_question)]+accuracy_prob)
+            accuracy_prob = predictions[list_previous_question[question_index]-1][int(next_question)]*accuracy_prob/(accuracy_prob+predictions[list_previous_question[question_index]-1][int(next_question)])
             
             st.text(f"Accuracy Probability for the Next Question: {accuracy_prob}")
 
