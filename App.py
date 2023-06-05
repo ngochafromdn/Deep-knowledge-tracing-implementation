@@ -75,8 +75,8 @@ def main(prediction):
             
             if next_question in previous_questions_accuracy_list:
                 if previous_questions_accuracy_list.index(next_question)==1:
-                    if accuracy_prob < 0.6:
-                        accuracy_prob = accuracy_prob + 0.1
+                    if accuracy_prob < 0.5:
+                        accuracy_prob = accuracy_prob*2
             if accuracy_prob > 1:
                 accuracy_prob = accuracy_prob/2
 
