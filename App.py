@@ -71,8 +71,15 @@ def main(prediction):
                 
                 accuracy_prob *= accuracy_prob_this
             
-            accuracy_prob = predictions[list_previous_question[question_index]-1][next_question] * (accuracy_prob_this/10+1)
+            accuracy_prob = predictions[list_previous_question[question_index]-1][next_question] * (accuracy_prob_this/5+1)
             
+            if next_question in previous_questions_accuracy_list:
+                if previous_questions_accuracy_list.index(next_question)==1:
+                    if accuracy_prob < 0.6:
+                        accuracy_prob = accuracy_prob + 0.1
+            if accuracy_prob > 1:
+                accuracy_prob = accuracy_prob/2
+
             st.text(f"Accuracy Probability for the Next Question: {accuracy_prob}")
 
 if __name__ == "__main__":
