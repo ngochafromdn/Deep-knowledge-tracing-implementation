@@ -18,17 +18,49 @@ predictions = predictions['prediction'][batch]
 def main(prediction):
     st.set_page_config(page_title="Question Accuracy Probability", page_icon="📚")
     
-    st.markdown(
+      st.markdown(
         """
         <style>
         .main {
             background-color: pink;
             margin: 0px 50px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .title {
+            color: #0000FF;
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instructions {
+            color: #000000;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .input-label {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .submit-button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin-top: 20px;
+        }
+        
+        .result-text {
+            font-size: 24px;
+            margin-top: 20px;
         }
         </style>
         """,
         unsafe_allow_html=True
     )
+    
     
     st.title("Question Accuracy Probability based on Deep Knowledge Tracing model")
     
