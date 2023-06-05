@@ -67,7 +67,7 @@ def main(prediction):
                 if accuracy_index == 1:
                     accuracy_prob_this = max(prediction[step])
                 else:
-                    accuracy_prob_this = max(prediction[step])-min(prediction[step])
+                    accuracy_prob_this = min(prediction[step])
                 
                 accuracy_prob *= accuracy_prob_this
             
