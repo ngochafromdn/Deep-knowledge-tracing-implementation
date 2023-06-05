@@ -6,7 +6,7 @@ import random
 import json
 
 # Load the predictions array here
-sample = random.randint(0, 150)
+sample = random.randint(0, 20)
 batch = random.randint(0, 63)
 
 with open(f'Result/prediction_{sample}.json', 'r') as file:
