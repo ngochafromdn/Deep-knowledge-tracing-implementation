@@ -71,7 +71,7 @@ def main(prediction):
                 
                 accuracy_prob *= accuracy_prob_this
             
-            accuracy_prob = accuracy_prob_this/predictions[list_previous_question[question_index]-1]
+            accuracy_prob = accuracy_prob_this*predictions[list_previous_question[question_index]-1]/(1-accuracy_prob_this)
             
             st.text(f"Accuracy Probability for the Next Question: {accuracy_prob}")
 
