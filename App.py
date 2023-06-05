@@ -18,7 +18,7 @@ predictions = predictions['prediction'][batch]
 def main(prediction):
     st.set_page_config(page_title="Question Accuracy Probability", page_icon="📚")
     
-      st.markdown(
+    st.markdown(
         """
         <style>
         .main {
