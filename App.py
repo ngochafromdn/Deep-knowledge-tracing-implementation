@@ -6,7 +6,7 @@ import random
 import json
 
 # Load the predictions array here
-sample = random.randint(0, 266)
+sample = random.randint(0, 150)
 batch = random.randint(0, 63)
 
 with open(f'Result/prediction_{sample}.json', 'r') as file:
@@ -25,6 +25,7 @@ def main(prediction):
         
         This app predicts the accuracy probability for the next question based on the previous questions and their accuracy. The model behind it is based on the Deep Knowledge Tracing model with Assistmentdata2015.
         
+        For more information, please go to : https://github.com/ngochafromdn/Deep-knowledge-tracing-implementation
         
         Suppose you are a students answer 100 questions from the questions list, this app will help you predict the accuracy probability of your next questions based on the result of previous questions 
         
